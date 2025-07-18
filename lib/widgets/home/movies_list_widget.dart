@@ -1,5 +1,3 @@
-// import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:ghibli/models/movies.dart';
 import 'package:ghibli/services/movies_api_services.dart';
@@ -10,32 +8,78 @@ class MoviesListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // inspect(MoviesApiServices().getMovies());
     return Column(
       children: [
-        Text('Movies', style: Theme.of(context).textTheme.titleMedium),
+        Text('Ghibli Movies', style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 16),
         FutureBuilder(
           future: MoviesApiServices().getMovies(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               List<Movie> movies = snapshot.requireData;
+
               return ListView.builder(
                 shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: movies.length,
-                physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: Image.network(movies[index].image!, width: 80),
-                    title: Text(movies[index].title!),
-                    subtitle: Text(movies[index].original_title!),
-                    trailing: Icon(Icons.chevron_right),
+                  final movie = movies[index];
 
-                    onTap: () => context.push('/movie/${movies[index].id}'),
+                  return Card(
+                    elevation: 3,
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 16,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(12),
+                      leading: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          movie.image!,
+                          width: 60,
+                          height: 90,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                                width: 60,
+                                height: 90,
+                                color: Colors.grey[300],
+                                child: const Icon(Icons.broken_image),
+                              ),
+                        ),
+                      ),
+                      title: Text(
+                        movie.title ?? 'Titre inconnu',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(movie.original_title ?? ''),
+                      trailing: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blue[50],
+                          shape: BoxShape.circle,
+                        ),
+                        padding: const EdgeInsets.all(8),
+                        child: const Icon(
+                          Icons.chevron_right,
+                          color: Colors.blue,
+                        ),
+                      ),
+                      onTap: () => context.push('/movie/${movie.id}'),
+                    ),
                   );
                 },
               );
             }
-            return CircularProgressIndicator();
+
+            if (snapshot.hasError) {
+              return Text('Erreur : ${snapshot.error}');
+            }
+
+            return const Center(child: CircularProgressIndicator());
           },
         ),
       ],
