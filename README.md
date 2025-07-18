@@ -81,6 +81,10 @@ L’id est celui renvoyé par l’API du studio Ghibli.
 * ✔️ Affichage clair de la durée (minutes + format heures)
 * ✔️ Interface en deux colonnes, responsive et lisible
 
-![Aperçu de l'application](assets/images/id.png)
+Détails d'un film
+![Détails d'un film](assets/images/id.png)
+
+Page d'acceuil
+![Page d'acceuil](assets/images/home.png)
 
 autheur : [TABAR LABONNE Baptiste](https://github.com/TabarBaptiste)
